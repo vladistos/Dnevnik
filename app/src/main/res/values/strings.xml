@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Дневник</string>
+    <string name="LoginButtonText">Войти</string>
+    <string name="copyright_bottom_text">©Vladik</string>
+    <string name="forgot_login_text">Забыли логин или пароль?</string>
+    <string name="password">Пароль</string>
+    <string name="login">Логин</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="recent_marks_on_main_text">Недавние оценки</string>
+    <string name="news_on_main_text">Новости</string>
+    <string name="work_info">Информация о работе</string>
+</resources>

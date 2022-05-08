@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.ScheduleFragment">
+
+    <FrameLayout
+        android:id="@+id/arrows_on_schedule_layout"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/arrow_above_schedule_next"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:src="@drawable/ic_baseline_arrow_forward_ios_24"/>
+        <TextView
+            android:id="@+id/text_above_schedule"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/black"/>
+        <ImageView
+            android:id="@+id/arrow_above_schedule_before"
+            android:layout_gravity="start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:src="@drawable/ic_baseline_arrow_back_ios_new_24"/>
+    </FrameLayout>
+
+    <ListView
+        android:layout_below="@id/arrows_on_schedule_layout"
+        android:id="@+id/schedule_list_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:divider="@null"/>
+
+</RelativeLayout>
