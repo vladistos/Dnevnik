@@ -8,7 +8,6 @@ import ru.vladik.myapplication.DiaryAPI.DataClasses.TimeTable;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
 
 public class StaticRecourses {
-    public static DiaryAPI diaryAPI = null;
     public static DiaryContext UserContext = null;
     public static TimeTable timeTable = null;
     public static List<Person> classmatePersonsList = null;

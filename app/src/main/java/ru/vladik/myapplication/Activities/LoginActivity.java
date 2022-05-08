@@ -18,6 +18,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
 import ru.vladik.myapplication.DiaryAPI.DiaryLoginException;
 import ru.vladik.myapplication.R;
+import ru.vladik.myapplication.Utils.AsyncUtil;
+import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.SharedPreferencesManager;
 import ru.vladik.myapplication.Utils.StaticRecourses;
 
@@ -27,32 +29,33 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         FrameLayout loggedCaseFrame = findViewById(R.id.login_load_frame);
-        RelativeLayout notLoggedCaseRelative = findViewById(R.id.login_main_relative);
-        notLoggedCaseRelative.setVisibility(View.INVISIBLE);
+        RelativeLayout notLoggedCaseRelativeLayout = findViewById(R.id.login_main_relative);
+        notLoggedCaseRelativeLayout.setVisibility(View.INVISIBLE);
         String[] loginInfo = SharedPreferencesManager.getAccountLoginInfo(this);
         if (loginInfo == null) {
-            notLoggedCaseRelative.setVisibility(View.VISIBLE);
+            notLoggedCaseRelativeLayout.setVisibility(View.VISIBLE);
             loggedCaseFrame.setVisibility(View.INVISIBLE);
             setLogin();
         } else {
-            DiaryAPI.startAsyncTask(() -> {
+            AsyncUtil.startAsyncTask(() -> {
                 try {
                     String login = loginInfo[0];
                     String password = loginInfo[1];
-                    StaticRecourses.diaryAPI = new DiaryAPI(login, password);
-                    StaticRecourses.UserContext = StaticRecourses.diaryAPI.getContext();
-                    StaticRecourses.classmatePersonsList = StaticRecourses.diaryAPI.getGroupPersons(
+                    DiaryAPI diaryAPI = new DiaryAPI(login, password);
+                    DiarySingleton.init(diaryAPI);
+                    StaticRecourses.UserContext = diaryAPI.getContext();
+                    StaticRecourses.classmatePersonsList = diaryAPI.getGroupPersons(
                             StaticRecourses.UserContext.getGroupIds().get(0)
                     );
-                    StaticRecourses.timeTable = StaticRecourses.diaryAPI.getGroupTimeTable(
+                    StaticRecourses.timeTable = diaryAPI.getGroupTimeTable(
                             StaticRecourses.UserContext.getGroupIds().get(0)
                     );
                     startActivity(new Intent(this, MainActivity.class));
                     finish();
                 } catch (DiaryLoginException e) {
-                    runOnUiThread(() -> {
+                    AsyncUtil.executeInMain(() -> {
                         loggedCaseFrame.setVisibility(View.GONE);
-                        notLoggedCaseRelative.setVisibility(View.VISIBLE);
+                        notLoggedCaseRelativeLayout.setVisibility(View.VISIBLE);
                         setLogin();
                     });
                 }
@@ -65,27 +68,25 @@ public class LoginActivity extends AppCompatActivity {
         TextInputEditText loginView = findViewById(R.id.login_edit_text);
         TextInputEditText passwordView = findViewById(R.id.password_edit_text);
         MaterialButton loginButton = findViewById(R.id.login_button);
-        loginButton.setOnClickListener((view -> DiaryAPI.startAsyncTask(() -> {
+        loginButton.setOnClickListener(view -> AsyncUtil.startAsyncTask(() -> {
             try {
                 String login = loginView.getText() != null ?
                         loginView.getText().toString() : "";
                 String password = passwordView.getText() != null ?
                         passwordView.getText().toString() : "";
                 if (!login.isEmpty() && !password.isEmpty()) {
-                    StaticRecourses.diaryAPI = new DiaryAPI(login, password);
-                    StaticRecourses.UserContext = StaticRecourses.diaryAPI.getContext();
-                    StaticRecourses.timeTable = StaticRecourses.diaryAPI.getGroupTimeTable(
-                            StaticRecourses.UserContext.getGroupIds().get(0)
-                    );
+                    DiaryAPI diaryAPI = new DiaryAPI(login, password);
+                    DiarySingleton.init(diaryAPI);
                     SharedPreferencesManager.saveAccountLoginInfo(this, login, password);
-                    startActivity(new Intent(this, MainActivity.class));
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
                     finish();
                 } else {
-                    runOnUiThread(() -> passwordInputLayout.setError("Поля не должны быть пустыми"));
+                    AsyncUtil.executeInMain(() -> passwordInputLayout.setError("Поля не должны быть пустыми"));
                 }
             } catch (DiaryLoginException e) {
-                runOnUiThread(() -> passwordInputLayout.setError("Ошибка авторизации"));
+                AsyncUtil.executeInMain(() -> passwordInputLayout.setError("Ошибка авторизации"));
             }
-        })));
+        }));
     }
 }

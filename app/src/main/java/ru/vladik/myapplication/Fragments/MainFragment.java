@@ -32,6 +32,8 @@ import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.FeedPostList;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.FullMark;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
 import ru.vladik.myapplication.R;
+import ru.vladik.myapplication.Utils.AsyncUtil;
+import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.LayoutHelper;
 import ru.vladik.myapplication.Utils.StaticRecourses;
 
@@ -48,7 +50,7 @@ public class MainFragment extends Fragment {
     private ViewGroup parent;
 
     public MainFragment() {
-        diaryAPI = StaticRecourses.diaryAPI;
+        diaryAPI = DiarySingleton.getInstance().getDiaryAPI();
     }
 
     @Override
@@ -64,8 +66,9 @@ public class MainFragment extends Fragment {
             newsListView.addHeaderView(headerView);
             newsListView.setDivider(null);
             marksRecyclerView = headerView.findViewById(R.id.marks_main_recycler);
-            marksRecyclerView.setLayoutManager(new LinearLayoutManager
-                    (getContext(), RecyclerView.HORIZONTAL, false));
+            marksRecyclerView.setLayoutManager(new LinearLayoutManager(
+                    getContext(), RecyclerView.HORIZONTAL, false
+            ));
             marksRecyclerView.setAdapter(new MarksAdapter(getContext()));
             LayoutHelper.setLoading(parent, true, null);
         }
@@ -86,7 +89,7 @@ public class MainFragment extends Fragment {
     }
 
     private void loadData(boolean refresh) {
-        DiaryAPI.startAsyncTask(() -> {
+        AsyncUtil.startAsyncTask(() -> {
             MarksAdapter marksAdapter = (MarksAdapter) marksRecyclerView.getAdapter();
             NewsAdapter newsAdapter = (NewsAdapter) ((HeaderViewListAdapter)newsListView.getAdapter()).getWrappedAdapter();
             if (marksAdapter != null && (refresh || marksAdapter.getItemCount() == 0)) {
@@ -104,14 +107,14 @@ public class MainFragment extends Fragment {
                             null
                     );
                 }
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        marksAdapter.refreshList(fullMarkList);
-                        newsAdapter.refreshList(feedPostList.getPosts());
-                        refreshLayout.setRefreshing(false);
-                        LayoutHelper.setLoading(parent, false, null);
-                    });
-                }
+
+                AsyncUtil.executeInMain(() -> {
+                    marksAdapter.refreshList(fullMarkList);
+                    newsAdapter.refreshList(feedPostList.getPosts());
+                    refreshLayout.setRefreshing(false);
+                    LayoutHelper.setLoading(parent, false, null);
+                });
+
             }
         });
     }

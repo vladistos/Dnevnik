@@ -42,6 +42,7 @@ import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
 import ru.vladik.myapplication.R;
 import ru.vladik.myapplication.Utils.AsyncUtil;
 import ru.vladik.myapplication.Utils.DateHelper;
+import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.DrawableHelper;
 import ru.vladik.myapplication.Utils.LayoutHelper;
 import ru.vladik.myapplication.Utils.StaticRecourses;
@@ -50,14 +51,16 @@ import ru.vladik.myapplication.Views.SelectableGridView;
 public class NewsAdapter extends ArrayAdapter<FeedPost> {
 
     private final int resourceLayout;
+    private final DiaryAPI diaryAPI;
 
     public NewsAdapter(@NonNull Context context, int resource) {
         super(context, resource);
+        diaryAPI = DiarySingleton.getInstance().getDiaryAPI();
         resourceLayout = resource;
     }
 
     public void refreshList(List<FeedPost> feedPostList) {
-        clear();;
+        clear();
         addAll(feedPostList);
         notifyDataSetChanged();
     }
@@ -123,16 +126,16 @@ public class NewsAdapter extends ArrayAdapter<FeedPost> {
                 if (feedPost.getThread() != null) {
                     String eventKey = feedPost.getThread().getEventKey();
                     if (finalUserVotePos == position) {
-                        DiaryAPI.startAsyncTask(() -> {
-                            feedPost.setLikes(StaticRecourses.diaryAPI.setReactionOnPost(
+                        AsyncUtil.startAsyncTask(() -> {
+                            feedPost.setLikes(diaryAPI.setReactionOnPost(
                                     eventKey,
                                     Reactions.getEmotion(Reactions.NOT_SET).getName()
                             ));
                             AsyncUtil.executeInMain(() -> notifyDataSetChanged());
                         });
                     } else if (position != reactionsGrid.getAdapter().getCount() - 1){
-                        DiaryAPI.startAsyncTask(() -> {
-                            feedPost.setLikes(StaticRecourses.diaryAPI.setReactionOnPost(
+                        AsyncUtil.startAsyncTask(() -> {
+                            feedPost.setLikes(diaryAPI.setReactionOnPost(
                                     eventKey,
                                     reactions.get(position).getEmoji().getName()
                             ));
@@ -162,8 +165,8 @@ public class NewsAdapter extends ArrayAdapter<FeedPost> {
                         adapter.setOnItemClickListener(new LayoutHelper.OnItemClickListener() {
                             @Override
                             public void onItemClick(ViewGroup parent, View view, int position) {
-                                DiaryAPI.startAsyncTask(() -> {
-                                    feedPost.setLikes(StaticRecourses.diaryAPI.setReactionOnPost(
+                                AsyncUtil.startAsyncTask(() -> {
+                                    feedPost.setLikes(diaryAPI.setReactionOnPost(
                                             eventKey,
                                             Reactions.getEmotion(position).getName()
                                     ));
@@ -204,7 +207,7 @@ public class NewsAdapter extends ArrayAdapter<FeedPost> {
         }
 
         if (feedPost.getLogoDrawable() == null) {
-            DiaryAPI.startAsyncTask(() -> {
+            AsyncUtil.startAsyncTask(() -> {
                 try {
                     if (!feedPost.getAuthor().getAvatarUrl().isEmpty()) {
                         feedPost.setLogoDrawable(DrawableHelper.drawableFromUrl(feedPost.getAuthor().getAvatarUrl()));

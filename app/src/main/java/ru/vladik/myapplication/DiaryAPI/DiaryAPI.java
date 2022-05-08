@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,12 +125,12 @@ public class DiaryAPI extends DiaryBase {
                             }
                         }
                     }
-                    fullMarkList.add(new FullMark(mark, null, subject));
+                    fullMarkList.add(new FullMark(mark, new Lesson(), subject));
                 }
             }
             return fullMarkList;
         } catch (JSONException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -208,8 +209,8 @@ public class DiaryAPI extends DiaryBase {
             String method = "lessons/" + lessonId;
             String lessonJsonString = getWithAPIv2(method, null, true);
             return gson.fromJson(lessonJsonString, lessonTypeToken);
-        } catch (NullPointerException e) {
-            return null;
+        } catch (Exception e) {
+            return new Lesson();
         }
     }
 
@@ -242,11 +243,6 @@ public class DiaryAPI extends DiaryBase {
         String method = "posts/likes/" + eventKey + "/" + reaction;
         String likesString = postAPInoV(method, null, null, true, true);
         return gson.fromJson(likesString, likesToken);
-    }
-
-    public static void startAsyncTask(Runnable task) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(task);
     }
 
 }

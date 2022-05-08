@@ -33,7 +33,9 @@ import ru.vladik.myapplication.DiaryAPI.DataClasses.LessonWithMarks;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.Schedule;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
 import ru.vladik.myapplication.R;
+import ru.vladik.myapplication.Utils.AsyncUtil;
 import ru.vladik.myapplication.Utils.DateHelper;
+import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.LayoutHelper;
 import ru.vladik.myapplication.Utils.StaticRecourses;
 import ru.vladik.myapplication.Utils.SwipeListener;
@@ -49,7 +51,7 @@ public class ScheduleFragment extends Fragment {
     private int weekOffset;
 
     public ScheduleFragment() {
-        diaryAPI = StaticRecourses.diaryAPI;
+        diaryAPI = DiarySingleton.getInstance().getDiaryAPI();
     }
 
     private long getDaysDelta(Calendar time1, Calendar time2) {
@@ -113,7 +115,7 @@ public class ScheduleFragment extends Fragment {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        DiaryAPI.startAsyncTask(() -> {
+        AsyncUtil.startAsyncTask(() -> {
             ScheduleAdapter scheduleAdapter = (ScheduleAdapter) scheduleListView.getAdapter();
             if (schedule == null) {
                 schedule = diaryAPI.getScheduleWithOffset(
@@ -131,23 +133,21 @@ public class ScheduleFragment extends Fragment {
                                 lessonWithMarks.getLesson().getId() != -1
                 );
             }
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    setDayOnAdapter(scheduleAdapter, scheduleAdapter.getDay(), schedule);
-                    scheduleListView.setOnTouchListener(new SwipeListener(getContext()) {
-                        @Override
-                        public void onSwipeLeft() {
-                            changeDay(1);
-                        }
+            AsyncUtil.executeInMain(() -> {
+                setDayOnAdapter(scheduleAdapter, scheduleAdapter.getDay(), schedule);
+                scheduleListView.setOnTouchListener(new SwipeListener(getContext()) {
+                    @Override
+                    public void onSwipeLeft() {
+                        changeDay(1);
+                    }
 
-                        @Override
-                        public void onSwipeRight() {
-                            changeDay(-1);
-                        }
-                    });
-                    LayoutHelper.setLoading(parent, false, null);
+                    @Override
+                    public void onSwipeRight() {
+                        changeDay(-1);
+                    }
                 });
-            }
+                LayoutHelper.setLoading(parent, false, null);
+            });
         });
     }
 
@@ -186,22 +186,22 @@ public class ScheduleFragment extends Fragment {
         ScheduleAdapter adapter = (ScheduleAdapter) scheduleListView.getAdapter();
         if (adapter.getDay() + daysDelta > adapter.getLastDay() || adapter.getDay() + daysDelta < 1) {
             Log.d("main", String.valueOf(daysDelta));
-            DiaryAPI.startAsyncTask(() -> {
+            AsyncUtil.startAsyncTask(() -> {
                 int weekOffsetDelta =
                         daysDelta > 0 ?
                                 (int) getInt((double) (daysDelta + adapter.getDay() - 1) / 7) :
                                 getWeekOffset(daysDelta, adapter.getDay());
-                int day = adapter.getDay() + daysDelta - weekOffsetDelta*7;
-                weekOffset+=weekOffsetDelta;
+                int day = adapter.getDay() + daysDelta - weekOffsetDelta * 7;
+                weekOffset += weekOffsetDelta;
                 Schedule schedule = diaryAPI.getScheduleWithOffset(
                         UserContext.getGroupIds().get(0),
                         UserContext.getPersonId(),
                         UserContext.getSchoolIds().get(0),
                         weekOffset
                 );
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> setDayOnAdapter(adapter, day, schedule));
-                }
+
+                AsyncUtil.executeInMain(() -> setDayOnAdapter(adapter, day, schedule));
+
             });
         } else {
             setDayOnAdapter(adapter, adapter.getDay() + daysDelta, null);
