@@ -1,17 +1,12 @@
 package ru.vladik.myapplication.Adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.view.Gravity;
+import android.graphics.drawable.ColorDrawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -19,23 +14,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.text.HtmlCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.FeedPost;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.File;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.Likes;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.Reaction;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.Reactions;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
@@ -45,7 +33,6 @@ import ru.vladik.myapplication.Utils.DateHelper;
 import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.DrawableHelper;
 import ru.vladik.myapplication.Utils.LayoutHelper;
-import ru.vladik.myapplication.Utils.StaticRecourses;
 import ru.vladik.myapplication.Views.SelectableGridView;
 
 public class NewsAdapter extends ArrayAdapter<FeedPost> {
@@ -62,6 +49,26 @@ public class NewsAdapter extends ArrayAdapter<FeedPost> {
     public void refreshList(List<FeedPost> feedPostList) {
         clear();
         addAll(feedPostList);
+        AsyncUtil.startAsyncTask(() -> {
+            for (FeedPost feedPost : feedPostList) {
+                if (feedPost.getLogoDrawable() == null) {
+                    try {
+                        if (!feedPost.getAuthor().getAvatarUrl().isEmpty()) {
+                            feedPost.setLogoDrawable(DrawableHelper.drawableFromUrl(feedPost.getAuthor().getAvatarUrl()));
+                        } else {
+                            feedPost.setLogoDrawable(DrawableHelper.drawableFromUrl(feedPost.getTopicLogoUrl()));
+                        }
+                        AsyncUtil.executeInMain(this::notifyDataSetChanged);
+                    } catch (IOException e) {
+                        TypedValue typedValue = new TypedValue();
+                        getContext().getTheme().resolveAttribute(R.attr.colorOnPrimary, typedValue, false);
+                        feedPost.setLogoDrawable(new ColorDrawable(typedValue.data));
+                    }
+
+                }
+            }
+            AsyncUtil.executeInMain(this::notifyDataSetChanged);
+        });
         notifyDataSetChanged();
     }
 
@@ -206,26 +213,12 @@ public class NewsAdapter extends ArrayAdapter<FeedPost> {
             contentText = contentText.substring(0, contentText.length()-2);
         }
 
-        if (feedPost.getLogoDrawable() == null) {
-            AsyncUtil.startAsyncTask(() -> {
-                try {
-                    if (!feedPost.getAuthor().getAvatarUrl().isEmpty()) {
-                        feedPost.setLogoDrawable(DrawableHelper.drawableFromUrl(feedPost.getAuthor().getAvatarUrl()));
-                    } else {
-                        feedPost.setLogoDrawable(DrawableHelper.drawableFromUrl(feedPost.getTopicLogoUrl()));
-                    }
-                    AsyncUtil.executeInMain(this::notifyDataSetChanged);
-                } catch (IOException e) {
-                    feedPost.setLogoDrawable(null);
-                    AsyncUtil.executeInMain(this::notifyDataSetChanged);
-                }
-            });
-        } else {
-            avatarImageView.setImageDrawable(feedPost.getLogoDrawable());
-        }
+
+        avatarImageView.setImageDrawable(feedPost.getLogoDrawable());
+
         try {
             dateTextView.setVisibility(View.VISIBLE);
-            dateTextView.setText(DateHelper.getDateWithTime(new Date(Long.parseLong(feedPost.getCreatedDateUtc())*1000)));
+            dateTextView.setText(DateHelper.getStringDateWithTime(new Date(Long.parseLong(feedPost.getCreatedDateUtc())*1000)));
         } catch (Exception e) {
             dateTextView.setVisibility(View.INVISIBLE);
         }

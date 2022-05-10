@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -16,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import ru.vladik.myapplication.DiaryAPI.DataClasses.Mood;
 
 public class DrawableHelper {
 
@@ -33,5 +36,18 @@ public class DrawableHelper {
 
         x = BitmapFactory.decodeStream(input);
         return new BitmapDrawable(Resources.getSystem(), x);
+    }
+
+    public static int getColorByMood(String mood, int defaultColor) {
+        switch (mood) {
+            case Mood.GOOD:
+                return DrawableHelper.GOOD_MOOD_COLOR;
+            case Mood.AVERAGE:
+                return DrawableHelper.AVERAGE_MOOD_COLOR;
+            case Mood.BAD:
+                return DrawableHelper.BAD_MOOD_COLOR;
+            default:
+                return defaultColor;
+        }
     }
 }

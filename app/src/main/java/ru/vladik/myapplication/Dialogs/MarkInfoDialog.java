@@ -2,12 +2,10 @@ package ru.vladik.myapplication.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.ViewGroup;
-import android.view.animation.RotateAnimation;
-import android.widget.SeekBar;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,13 +24,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.vladik.myapplication.Adapters.LegendAdapter;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.FullMark;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.Lesson;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.Mark;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Mood;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.Person;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.Subject;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
 import ru.vladik.myapplication.R;
 import ru.vladik.myapplication.Utils.AsyncUtil;
+import ru.vladik.myapplication.Utils.DateHelper;
 import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.DrawableHelper;
 import ru.vladik.myapplication.Utils.LayoutHelper;
@@ -42,6 +43,8 @@ public class MarkInfoDialog extends Dialog {
 
     private final Mark mark;
     private Map<Person, List<Mark>> personMarkHashMap;
+    private final Lesson lesson;
+    private final Subject subject;
     private final DiaryAPI diaryAPI;
     private final ViewGroup mainLayout;
 
@@ -50,6 +53,8 @@ public class MarkInfoDialog extends Dialog {
         diaryAPI = DiarySingleton.getInstance().getDiaryAPI();
         setContentView(R.layout.mark_info_dialog);
         this.mark = mark.getMark();
+        lesson = mark.getLesson();
+        subject = mark.getSubject();
         mainLayout = findViewById(R.id.main_layout_in_work_info_dialog);
         LayoutHelper.setLoading(mainLayout, true, null);
         ViewHolder holder = new ViewHolder();
@@ -109,25 +114,15 @@ public class MarkInfoDialog extends Dialog {
             }
 
             Map<List<Mark>, Integer> colorMap = new HashMap<>();
+            List<List<Mark>> listOfMarkLists = new ArrayList<>();
             for (String markVal : marksValueMap.keySet()) {
                 List<Mark> markList = marksValueMap.get(markVal);
                 if (markList != null && markList.size() > 0) {
-                    switch (markList.get(0).getMood()) {
-                        case Mood.GOOD:
-                            colorMap.put(marksValueMap.get(markVal), DrawableHelper.GOOD_MOOD_COLOR);
-                            break;
-                        case Mood.AVERAGE:
-                            colorMap.put(marksValueMap.get(markVal), DrawableHelper.AVERAGE_MOOD_COLOR);
-                            break;
-                        case Mood.BAD:
-                            colorMap.put(marksValueMap.get(markVal), DrawableHelper.BAD_MOOD_COLOR);
-                            break;
-                        default:
-                            colorMap.put(marksValueMap.get(markVal), Color.WHITE);
-                            break;
-                    }
+                    colorMap.put(marksValueMap.get(markVal), DrawableHelper.getColorByMood(markList.get(0).getMood(), Color.WHITE));
                 }
+                listOfMarkLists.add(markList);
             }
+            ((LegendAdapter) holder.legendListView.getAdapter()).refreshList(listOfMarkLists);
             for (List<Mark> markList : colorMap.keySet()) {
                 if (markList.size() != 0) {
                     PieEntry entry = new PieEntry(markList.size(), markList.get(0).getTextValue());
@@ -142,6 +137,21 @@ public class MarkInfoDialog extends Dialog {
             AsyncUtil.executeInMain(() -> {
                 dataSet.setValues(entries);
                 holder.marksGraph.setData(new PieData(dataSet));
+                if (subject != null) {
+                    holder.descriptionTextView.append(" по предмету ");
+                    holder.descriptionTextView.append(subject.getName());
+                }
+                try {
+                    if (lesson.getDate() != null && !lesson.getDate().isEmpty()) {
+                        holder.descriptionTextView.append(" за ");
+                        holder.descriptionTextView.append(
+                                DateHelper.getStringDate(DateHelper.getDateFromString(lesson.getDate()))
+                        );
+                    }
+
+                } catch (Exception ignored) {
+
+                }
                 LayoutHelper.setLoading(mainLayout, false, null);
             });
         });
@@ -150,17 +160,25 @@ public class MarkInfoDialog extends Dialog {
     private class ViewHolder{
 
          PieChart marksGraph;
-         TextView markDescriptionTextView;
+         TextView markDescriptionTextView, descriptionTextView;
+         ListView legendListView;
 
         public ViewHolder() {
             marksGraph =findViewById(R.id.graph_in_marks_dialog);
             markDescriptionTextView = findViewById(R.id.mark_description_in_marks_dialog);
+            legendListView = findViewById(R.id.legend_in_marks_dialog);
+            descriptionTextView = findViewById(R.id.description_in_marks_dialog);
             markDescriptionTextView.setText("Выберите оценку на диаграмме");
-            marksGraph.setCenterTextSize(15);
-            marksGraph.setEntryLabelTextSize(20);
+            marksGraph.setEntryLabelTextSize(0);
             marksGraph.getLegend().setEnabled(false);
+            marksGraph.getLegend().setTextSize(15);
             marksGraph.getDescription().setTextSize(15);
             marksGraph.setDrawHoleEnabled(true);
+            marksGraph.setHoleRadius(80);
+            marksGraph.setCenterTextColor(DrawableHelper.getColorByMood(mark.getMood(), Color.BLACK));
+            marksGraph.setCenterText(mark.getTextValue());
+            marksGraph.setCenterTextSize(30);
+
             marksGraph.setDescription(null);
             marksGraph.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
                 @Override
@@ -190,8 +208,8 @@ public class MarkInfoDialog extends Dialog {
                                     i++;
                                 }
                             }
-                            if (i > 0) {
-                                descriptionTextBuilder.append("\n");
+                            if (i > 0 && i < personMarkHashMap.keySet().size() - 1) {
+                                descriptionTextBuilder.append(", ");
                             }
                         }
 
@@ -205,6 +223,8 @@ public class MarkInfoDialog extends Dialog {
                     markDescriptionTextView.setText("Выберите оценку на диаграмме");
                 }
             });
+            legendListView.setEnabled(false);
+            legendListView.setAdapter(new LegendAdapter(getContext(), R.layout.mark_item_in_marks));
         }
     }
 }

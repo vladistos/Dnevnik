@@ -103,10 +103,10 @@ public class ScheduleFragment extends Fragment {
             datePickerDialog.show();
         }));
 
-        view.findViewById(R.id.arrow_above_schedule_before).setOnClickListener((view1) ->
+        view.findViewById(R.id.arrow_above_schedule_before).setOnClickListener((v) ->
                 changeDay(-1));
 
-        view.findViewById(R.id.arrow_above_schedule_next).setOnClickListener((view1) ->
+        view.findViewById(R.id.arrow_above_schedule_next).setOnClickListener((v) ->
                 changeDay(1));
         LayoutHelper.setLoading(parent, true, null);
         return view;

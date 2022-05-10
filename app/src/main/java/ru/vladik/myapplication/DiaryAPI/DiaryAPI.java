@@ -245,4 +245,11 @@ public class DiaryAPI extends DiaryBase {
         return gson.fromJson(likesString, likesToken);
     }
 
+    public Work getWorkById(Long workId) {
+        Type workType = new TypeToken<Work>(){}.getType();
+        String method = "works/" + workId;
+        String markListString = getWithAPIv2(method, null, true);
+        return gson.fromJson(markListString, workType);
+    }
+
 }

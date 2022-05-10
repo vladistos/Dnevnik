@@ -1,5 +1,7 @@
 package ru.vladik.myapplication.Adapters;
 
+import static ru.vladik.myapplication.Utils.DateHelper.getDateFromString;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,23 +41,7 @@ public class ScheduleAdapter extends ArrayAdapter<LessonWithMarks> {
         notifyDataSetChanged();
     }
 
-    public Date getDate() throws CouldNotGetDateException {
-        String dateString;
-        dateString = schedule.get(day).get(0).getLesson().getDate().replace("T", " ");
-        return getDateFromString(dateString);
-    }
 
-    public Date getDateFromString(String date) throws CouldNotGetDateException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss",
-                new Locale(StaticRecourses.LOCALE_RU)
-        );
-        try {
-            return simpleDateFormat.parse(date);
-        } catch (ParseException e) {
-            throw new CouldNotGetDateException(e.getMessage());
-        }
-    }
 
     public int getDay() {
         return day;
@@ -127,8 +113,8 @@ public class ScheduleAdapter extends ArrayAdapter<LessonWithMarks> {
         String date;
         try {
             lessonTime.setVisibility(View.VISIBLE);
-            String start = timeTable.getItems().get(lesson.getNumber()-1).getStart().replace("T", " ");
-            String finish = timeTable.getItems().get(lesson.getNumber()-1).getFinish().replace("T", " ");
+            String start = timeTable.getItems().get(lesson.getNumber()-1).getStart();
+            String finish = timeTable.getItems().get(lesson.getNumber()-1).getFinish();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", new Locale(StaticRecourses.LOCALE_RU));
             Date dateStart = getDateFromString(start);
             Date dateEnd = getDateFromString(finish);

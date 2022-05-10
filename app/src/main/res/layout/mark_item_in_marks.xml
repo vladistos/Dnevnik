@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/mark_color_in_mark_item"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:layout_toEndOf="@id/mark_color_in_mark_item"
+        android:id="@+id/mark_text_in_mark_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_centerVertical="true"/>
+
+</RelativeLayout>

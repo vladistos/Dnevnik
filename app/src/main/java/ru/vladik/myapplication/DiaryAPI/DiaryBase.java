@@ -25,6 +25,7 @@ import ru.vladik.myapplication.DiaryAPI.Util.HttpUtil;
 public class DiaryBase {
     private final String token;
     private final String API_URL = "https://api.dnevnik.ru/v2/";
+    private final String API_V6_MOBILE_URL = "https://api.dnevnik.ru/mobile/v6.0/";
     private final String API_URL_NO_V = "https://dnevnik.ru/api/";
     private final String login, password;
     private final OkHttpClient client;
@@ -175,6 +176,10 @@ public class DiaryBase {
         return get(API_URL, method, queryParams, checkJson, false);
     }
 
+    public String getWithAPIv6Mobile(String method, @Nullable Map<String, String> queryParams, boolean checkJson) {
+        return get(API_V6_MOBILE_URL, method, queryParams, checkJson, false);
+    }
+
     public String getWithAPInoV(String method, @Nullable Map<String, String> queryParams,
                                 boolean checkJson, boolean refreshCookieOnError) {
         return get(API_URL_NO_V, method, queryParams, checkJson, refreshCookieOnError);
@@ -183,6 +188,11 @@ public class DiaryBase {
     public String post(String method, @Nullable Map<String, String> queryParams,
                      @Nullable Map<String, String> data, boolean checkJson) {
         return post(API_URL, method, queryParams, data, checkJson, false);
+    }
+
+    public String postWithAPIv6Mobile(String method, @Nullable Map<String, String> queryParams,
+                       @Nullable Map<String, String> data, boolean checkJson) {
+        return post(API_V6_MOBILE_URL, method, queryParams, data, checkJson, false);
     }
 
     public String postAPInoV(String method, @Nullable Map<String, String> queryParams,
