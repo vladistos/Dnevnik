@@ -2,20 +2,18 @@ package ru.vladik.myapplication.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PaintDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -49,9 +47,18 @@ public class LegendAdapter extends ArrayAdapter<List<Mark>> {
         List<Mark> markList = getItem(position);
         if (markList.size() > 0) {
             Mark mark = markList.get(0);
-            String text = mark.getTextValue() + " - " + markList.size();
+            String text = String.valueOf(markList.size());
             holder.markText.setText(text);
-            holder.markImage.setImageDrawable(new ColorDrawable(DrawableHelper.getColorByMood(mark.getMood(), Color.WHITE)));
+            GradientDrawable Rdrawable = (GradientDrawable) AppCompatResources
+                    .getDrawable(getContext(), R.drawable.solid_rounded);
+
+            if (Rdrawable != null) {
+                GradientDrawable drawable = (GradientDrawable) Rdrawable.getConstantState().newDrawable();
+                drawable = (GradientDrawable) drawable.getConstantState().newDrawable();
+                drawable.setColor(DrawableHelper.getColorByMood(getContext(), mark.getMood(), Color.WHITE));
+                holder.markValue.setBackground(drawable);
+                holder.markValue.setText(mark.getTextValue());
+            }
         }
         return holder.itemView;
     }
@@ -59,12 +66,12 @@ public class LegendAdapter extends ArrayAdapter<List<Mark>> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView markText;
-        private final ImageView markImage;
+        private final TextView markValue;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            markText = itemView.findViewById(R.id.mark_text_in_mark_item);
-            markImage = itemView.findViewById(R.id.mark_color_in_mark_item);
+            markText = itemView.findViewById(R.id.mark_description_in_mark_describe_item);
+            markValue = itemView.findViewById(R.id.mark_in_mark_describe_item);
         }
     }
 }

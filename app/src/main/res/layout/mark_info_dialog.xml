@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:id="@+id/main_layout_in_work_info_dialog"
     android:layout_height="match_parent"
-    android:background="@drawable/solid_rounded"
     android:orientation="vertical">
 
     <TextView
@@ -26,14 +25,15 @@
             android:id="@+id/graph_in_marks_dialog"
             android:padding="10dp"
             android:layout_margin="20dp"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
             android:layout_gravity="start" />
 
         <ListView
             android:id="@+id/legend_in_marks_dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="end"
             android:layout_margin="10dp"/>
 
     </LinearLayout>

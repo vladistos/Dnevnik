@@ -2,34 +2,40 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/recycle_main_relative"
-    android:layout_width="80dp"
-    android:layout_height="70dp"
+    android:id="@+id/recycle_main"
+    android:orientation="vertical"
+    android:layout_width="95dp"
+    android:layout_height="90dp"
     android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/mark_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:textColor="#FFFFFF"
-        android:textSize="25sp"
-        android:textStyle="bold" />
+    <RelativeLayout
+        android:layout_above="@+id/mark_subject"
+        android:id="@+id/mark_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/mark_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="10dp"
+            android:textColor="#FFFFFF"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
 
 
     <TextView
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/mark_subject"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="15sp"
-        android:textColor="@color/white"
-        android:layout_alignParentBottom="true"
         android:textStyle="bold"
         android:layout_marginBottom="5dp"/>
 

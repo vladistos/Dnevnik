@@ -4,24 +4,17 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -45,24 +38,15 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    private final GradientDrawable shapeGood, shapeAverage, shapeBad;
+    private final Drawable shapeGood, shapeAverage, shapeBad;
     private final Context context;
 
     public MarksAdapter(@NonNull Context context) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
-        shapeBad = new GradientDrawable();
-        shapeGood = new GradientDrawable();
-        shapeAverage = new GradientDrawable();
-        shapeAverage.setCornerRadius(20);
-        shapeBad.setCornerRadius(20);
-        shapeGood.setCornerRadius(20);
-        shapeBad.setColors(new int[] {DrawableHelper.BAD_MOOD_COLOR - 0x44000000,
-                DrawableHelper.BAD_MOOD_COLOR});
-        shapeGood.setColors(new int[] {DrawableHelper.GOOD_MOOD_COLOR - 0x44000000,
-                DrawableHelper.GOOD_MOOD_COLOR});
-        shapeAverage.setColors(new int[] {DrawableHelper.AVERAGE_MOOD_COLOR - 0x44000000,
-                DrawableHelper.AVERAGE_MOOD_COLOR});
+        shapeGood = AppCompatResources.getDrawable(context, R.drawable.good_shape_gradient_drawable);
+        shapeAverage = AppCompatResources.getDrawable(context, R.drawable.average_shape_gradient_drawable);
+        shapeBad = AppCompatResources.getDrawable(context, R.drawable.bad_shape_gradient_drawable);
     }
 
     @NonNull
@@ -108,8 +92,7 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
                     throw new IllegalStateException("Unexpected value: " + markList.get(position).getMark().getMood());
             }
         }
-        Log.d("main", String.valueOf(rippleDrawable.getNumberOfLayers()));
-        holder.mainLayout.setBackground(rippleDrawable);
+        holder.markLayout.setBackground(rippleDrawable);
         holder.mainLayout.setOnClickListener((view) ->{
             Dialog dialog = new MarkInfoDialog(context, markList.get(position));
             dialog.show();
@@ -124,11 +107,13 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView markText, markSubject;
         RelativeLayout mainLayout;
+        RelativeLayout markLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            mainLayout = itemView.findViewById(R.id.recycle_main_relative);
+            mainLayout = itemView.findViewById(R.id.recycle_main);
             markText = itemView.findViewById(R.id.mark_text);
             markSubject = itemView.findViewById(R.id.mark_subject);
+            markLayout = itemView.findViewById(R.id.mark_layout);
         }
     }
 }

@@ -3,7 +3,7 @@ package ru.vladik.myapplication.Dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
+import android.graphics.Typeface;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -118,7 +118,8 @@ public class MarkInfoDialog extends Dialog {
             for (String markVal : marksValueMap.keySet()) {
                 List<Mark> markList = marksValueMap.get(markVal);
                 if (markList != null && markList.size() > 0) {
-                    colorMap.put(marksValueMap.get(markVal), DrawableHelper.getColorByMood(markList.get(0).getMood(), Color.WHITE));
+                    colorMap.put(marksValueMap.get(markVal), DrawableHelper.getColorByMood(getContext(),
+                            markList.get(0).getMood(), Color.WHITE));
                 }
                 listOfMarkLists.add(markList);
             }
@@ -175,9 +176,10 @@ public class MarkInfoDialog extends Dialog {
             marksGraph.getDescription().setTextSize(15);
             marksGraph.setDrawHoleEnabled(true);
             marksGraph.setHoleRadius(80);
-            marksGraph.setCenterTextColor(DrawableHelper.getColorByMood(mark.getMood(), Color.BLACK));
+            marksGraph.setCenterTextColor(DrawableHelper.getColorByMood(getContext(), mark.getMood(), Color.BLACK));
             marksGraph.setCenterText(mark.getTextValue());
             marksGraph.setCenterTextSize(30);
+            marksGraph.setCenterTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
             marksGraph.setDescription(null);
             marksGraph.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -190,17 +192,18 @@ public class MarkInfoDialog extends Dialog {
                             .append(" оценок ")
                             .append(((PieEntry) e).getLabel())
                             .append("\n");
+                    int j = 0;
                     for (Person person : personMarkHashMap.keySet()) {
+                        j++;
                         List<Mark> markList = personMarkHashMap.get(person);
                         if (markList != null) {
-                            Log.d("main", markList.toString());
                             int i = 0;
                             for (Mark mark : markList) {
                                 if (mark.getTextValue().equals((((PieEntry) e).getLabel()))) {
                                     if (i == 0) {
                                         descriptionTextBuilder
                                                 .append(person.getShortName())
-                                                .append(" получил ");
+                                                .append(" - ");
                                         descriptionTextBuilder.append(mark.getTextValue());
                                     } else {
                                         descriptionTextBuilder.append("/").append(mark.getTextValue());
@@ -208,14 +211,16 @@ public class MarkInfoDialog extends Dialog {
                                     i++;
                                 }
                             }
-                            if (i > 0 && i < personMarkHashMap.keySet().size() - 1) {
-                                descriptionTextBuilder.append(", ");
+                            if (j > 0 && j < personMarkHashMap.keySet().size() && i > 0) {
+                                descriptionTextBuilder.append("\n");
                             }
                         }
-
                     }
-
-                    markDescriptionTextView.setText(descriptionTextBuilder.toString());
+                    String s = descriptionTextBuilder.toString();
+                    if (s.endsWith("\n")) {
+                        s = s.substring(0, s.length()-1);
+                    }
+                    markDescriptionTextView.setText(s);
                 }
 
                 @Override
@@ -224,7 +229,7 @@ public class MarkInfoDialog extends Dialog {
                 }
             });
             legendListView.setEnabled(false);
-            legendListView.setAdapter(new LegendAdapter(getContext(), R.layout.mark_item_in_marks));
+            legendListView.setAdapter(new LegendAdapter(getContext(), R.layout.mark_description_item));
         }
     }
 }
