@@ -2,32 +2,26 @@ package ru.vladik.myapplication.Fragments;
 
 import static ru.vladik.myapplication.Utils.StaticRecourses.UserContext;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.HeaderViewListAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import java.util.Collections;
 import java.util.List;
 
+import ru.vladik.myapplication.Activities.LoginActivity;
 import ru.vladik.myapplication.Adapters.MarksAdapter;
 import ru.vladik.myapplication.Adapters.NewsAdapter;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.FeedPost;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.FeedPostList;
 import ru.vladik.myapplication.DiaryAPI.DataClasses.FullMark;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
@@ -35,13 +29,10 @@ import ru.vladik.myapplication.R;
 import ru.vladik.myapplication.Utils.AsyncUtil;
 import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.LayoutHelper;
-import ru.vladik.myapplication.Utils.StaticRecourses;
-
-import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.Reactions;
 
 public class MainFragment extends Fragment {
 
-    private final DiaryAPI diaryAPI;
+    private DiaryAPI diaryAPI;
     private RecyclerView marksRecyclerView;
     private ListView newsListView;
     private FeedPostList feedPostList;
@@ -50,7 +41,11 @@ public class MainFragment extends Fragment {
     private ViewGroup parent;
 
     public MainFragment() {
-        diaryAPI = DiarySingleton.getInstance().getDiaryAPI();
+        try {
+            diaryAPI = DiarySingleton.getInstance().getDiaryAPI();
+        } catch (AssertionError e) {
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+        }
     }
 
     @Override
@@ -62,7 +57,7 @@ public class MainFragment extends Fragment {
         parent = (ViewGroup) view;
         if (getContext() != null && getActivity() != null) {
             newsListView.setAdapter(new NewsAdapter(getContext(), R.layout.wall_feed_element));
-            View headerView = getActivity().getLayoutInflater().inflate(R.layout.header_to_news, null);
+            View headerView = getActivity().getLayoutInflater().inflate(R.layout.header_to_news, container);
             newsListView.addHeaderView(headerView);
             newsListView.setDivider(null);
             marksRecyclerView = headerView.findViewById(R.id.marks_main_recycler);
@@ -72,12 +67,7 @@ public class MainFragment extends Fragment {
             marksRecyclerView.setAdapter(new MarksAdapter(getContext()));
             LayoutHelper.setLoading(parent, true, null);
         }
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                loadData(true);
-            }
-        });
+        refreshLayout.setOnRefreshListener(() -> loadData(true));
         return view;
     }
 

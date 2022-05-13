@@ -11,7 +11,7 @@
     <color name="bad_mood">#FFa70820</color>
     <color name="average_mood">#FFf56e1a</color>
     <color name="good_mood">#FF469023</color>
-    <color name="bad_mood_light">#D63643</color>
-    <color name="average_mood_light">#D68F62</color>
-    <color name="good_mood_light">#97CC34</color>
+    <color name="bad_mood_light">#FFe74a58</color>
+    <color name="average_mood_light">#FFfad864</color>
+    <color name="good_mood_light">#FFa9e04e</color>
 </resources>

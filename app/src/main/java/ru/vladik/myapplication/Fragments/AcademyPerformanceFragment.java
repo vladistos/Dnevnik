@@ -11,28 +11,19 @@ import android.view.ViewGroup;
 import ru.vladik.myapplication.R;
 
 
-public class DiaryFragment extends Fragment {
+public class AcademyPerformanceFragment extends Fragment {
 
-    public DiaryFragment() {
-    }
-
-    public static DiaryFragment newInstance() {
-        DiaryFragment fragment = new DiaryFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+    public AcademyPerformanceFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_diary, container, false);
+        return inflater.inflate(R.layout.fragment_academy_performance, container, false);
     }
 }

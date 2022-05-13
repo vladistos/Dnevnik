@@ -50,8 +50,10 @@ public class NewsAdapter extends ArrayAdapter<FeedPost> {
         clear();
         addAll(feedPostList);
         AsyncUtil.startAsyncTask(() -> {
+            boolean refresh = false;
             for (FeedPost feedPost : feedPostList) {
                 if (feedPost.getLogoDrawable() == null) {
+                    refresh = true;
                     try {
                         if (!feedPost.getAuthor().getAvatarUrl().isEmpty()) {
                             feedPost.setLogoDrawable(DrawableHelper.drawableFromUrl(feedPost.getAuthor().getAvatarUrl()));
@@ -67,7 +69,9 @@ public class NewsAdapter extends ArrayAdapter<FeedPost> {
 
                 }
             }
-            AsyncUtil.executeInMain(this::notifyDataSetChanged);
+            if (refresh) {
+                AsyncUtil.executeInMain(this::notifyDataSetChanged);
+            }
         });
         notifyDataSetChanged();
     }

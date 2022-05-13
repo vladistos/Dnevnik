@@ -18,12 +18,11 @@ public class DiarySingleton {
         return singleton;
     }
 
-    public synchronized static DiarySingleton init(DiaryAPI diaryAPI) {
+    public synchronized static void init(DiaryAPI diaryAPI) {
         if (singleton != null) {
             throw new AssertionError("You already initialized me");
         }
         singleton = new DiarySingleton(diaryAPI);
-        return singleton;
     }
 
     public DiaryAPI getDiaryAPI() {

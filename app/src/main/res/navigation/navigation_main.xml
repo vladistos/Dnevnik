@@ -12,9 +12,9 @@
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="ru.vladik.myapplication.Fragments.DiaryFragment"
+        android:name="ru.vladik.myapplication.Fragments.AcademyPerformanceFragment"
         android:label="fragment_diary"
-        tools:layout="@layout/fragment_diary" />
+        tools:layout="@layout/fragment_academy_performance" />
     <fragment
         android:id="@+id/scheduleFragment"
         android:name="ru.vladik.myapplication.Fragments.ScheduleFragment"

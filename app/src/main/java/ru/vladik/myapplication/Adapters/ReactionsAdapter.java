@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -70,12 +69,7 @@ public class ReactionsAdapter extends ArrayAdapter<Reaction> {
         }
         if (onClickListener != null) {
             View finalView = view;
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickListener.onItemClick(parent, finalView, position);
-                }
-            });
+            view.setOnClickListener(v -> onClickListener.onItemClick(parent, finalView, position));
         }
 
         return view;
