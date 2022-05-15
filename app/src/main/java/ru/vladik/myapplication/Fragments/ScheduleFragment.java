@@ -18,10 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,29 +26,28 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.vladik.myapplication.Adapters.ScheduleAdapter;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.LessonWithMarks;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Schedule;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.LessonWithMarks;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.Schedule;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
 import ru.vladik.myapplication.R;
 import ru.vladik.myapplication.Utils.AsyncUtil;
 import ru.vladik.myapplication.Utils.DateHelper;
 import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.LayoutHelper;
-import ru.vladik.myapplication.Utils.StaticRecourses;
 import ru.vladik.myapplication.Utils.SwipeListener;
+import ru.vladik.myapplication.databinding.FragmentScheduleBinding;
 
 
 public class ScheduleFragment extends Fragment {
 
-    private final DiaryAPI diaryAPI;
-    private ListView scheduleListView;
-    private TextView aboveScheduleTextView;
-    private ViewGroup parent;
+    private DiaryAPI diaryAPI;
     private Schedule schedule;
+    private FragmentScheduleBinding binding;
+    private TextView dateTextView;
+    private ListView scheduleListView;
     private int weekOffset;
 
     public ScheduleFragment() {
-        diaryAPI = DiarySingleton.getInstance().getDiaryAPI();
     }
 
     private long getDaysDelta(Calendar time1, Calendar time2) {
@@ -78,18 +74,19 @@ public class ScheduleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_schedule, container, false);
-        parent = (ViewGroup) view;
+        binding = FragmentScheduleBinding.inflate(inflater, container, false);
+        scheduleListView = binding.scheduleListView;
+        dateTextView = binding.textAboveSchedule;
+        ViewGroup view = binding.getRoot();
         weekOffset = 0;
-        scheduleListView = view.findViewById(R.id.schedule_list_view);
         if (getContext() != null) {
             scheduleListView.setAdapter(new ScheduleAdapter(getContext(), R.layout.schedule_list_element));
+            diaryAPI = DiarySingleton.getInstance(getContext()).getDiaryAPI();
         }
 
-        aboveScheduleTextView = view.findViewById(R.id.text_above_schedule);
-        aboveScheduleTextView.setOnClickListener((textView -> {
+        dateTextView.setOnClickListener((textView -> {
             Calendar calendar = Calendar.getInstance(new Locale(LOCALE_RU));
             calendar.setTime(getDateOnSchedule());
             DatePickerDialog.OnDateSetListener listener = (datePickerView, year, month, dayOfMonth) -> {
@@ -103,12 +100,12 @@ public class ScheduleFragment extends Fragment {
             datePickerDialog.show();
         }));
 
-        view.findViewById(R.id.arrow_above_schedule_before).setOnClickListener((v) ->
+        binding.arrowAboveScheduleBefore.setOnClickListener((v) ->
                 changeDay(-1));
 
-        view.findViewById(R.id.arrow_above_schedule_next).setOnClickListener((v) ->
+        binding.arrowAboveScheduleNext.setOnClickListener((v) ->
                 changeDay(1));
-        LayoutHelper.setLoading(parent, true, null);
+        LayoutHelper.setLoading(view, true, null);
         return view;
     }
 
@@ -146,7 +143,7 @@ public class ScheduleFragment extends Fragment {
                         changeDay(-1);
                     }
                 });
-                LayoutHelper.setLoading(parent, false, null);
+                LayoutHelper.setLoading(binding.getRoot(), false, null);
             });
         });
     }
@@ -175,7 +172,7 @@ public class ScheduleFragment extends Fragment {
             }
             adapter.setDay(day);
             String stringText = DateHelper.getDateRU(getDateOnSchedule(), adapter.getDay());
-            aboveScheduleTextView.setText(stringText);
+            dateTextView.setText(stringText);
         }
 
     }

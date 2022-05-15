@@ -2,10 +2,9 @@ package ru.vladik.myapplication.Utils;
 
 import java.util.List;
 
-import ru.vladik.myapplication.DiaryAPI.DataClasses.DiaryContext;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Person;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.TimeTable;
-import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.DiaryContext;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.Person;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.TimeTable;
 
 public class StaticRecourses {
     public static DiaryContext UserContext = null;

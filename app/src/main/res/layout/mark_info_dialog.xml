@@ -1,54 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:id="@+id/main_layout_in_work_info_dialog"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:textAlignment="center"
-        android:id="@+id/description_in_marks_dialog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:text="@string/work_info"
-        android:layout_gravity="center_horizontal"
-        android:textStyle="bold"
-        android:layout_margin="10dp"/>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/graph_in_marks_dialog"
-            android:padding="10dp"
-            android:layout_margin="20dp"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:layout_gravity="start" />
-
-        <ListView
-            android:id="@+id/legend_in_marks_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_margin="10dp"/>
-
-    </LinearLayout>
+    <include layout="@layout/toolbar"/>
 
     <androidx.core.widget.NestedScrollView
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/main_layout_in_work_info_dialog"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:id="@+id/mark_description_in_marks_dialog" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/description_in_marks_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/work_info"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_below="@+id/description_in_marks_dialog"
+                android:id="@+id/mark_description_in_marks_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/mark_in_class"
+                android:layout_gravity="start"
+                android:textStyle="bold"
+                android:layout_margin="10dp"/>
+
+            <RelativeLayout
+                android:layout_below="@id/mark_description_in_marks_dialog"
+                android:id="@+id/mark_info_container"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/graph_in_marks_dialog"
+                        android:layout_width="125dp"
+                        android:layout_height="125dp"
+                        android:layout_gravity="start"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:padding="10dp" />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:divider="@null"
+                        android:id="@+id/legend_in_marks_dialog"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/graph_in_marks_dialog"
+                        android:layout_margin="10dp"/>
+
+                </RelativeLayout>
+
+            <com.github.mikephil.charting.charts.HorizontalBarChart
+                android:layout_below="@id/mark_info_container"
+                android:id="@+id/mark_statistic_chart"
+                android:layout_width="match_parent"
+                android:layout_height="800dp"/>
+
+        </RelativeLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

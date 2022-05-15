@@ -6,14 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import java.util.List;
 
-import ru.vladik.myapplication.DiaryAPI.DataClasses.FeedPost.Reaction;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.webApi.Reaction;
 import ru.vladik.myapplication.R;
 import ru.vladik.myapplication.Utils.LayoutHelper;
 
@@ -57,15 +58,14 @@ public class ReactionsAdapter extends ArrayAdapter<Reaction> {
         if (position < getCount()-1) {
             Reaction reaction = getItem(position);
 
-            String reactionTextString = reaction.getEmoji().getEmoji() + " " + reaction.getVotes();
-            holder.reactionTextView.setText(reactionTextString);
+            String reactionTextString = reaction.getEmoji().getEmoji();
         } else {
-            holder.reactionTextView.setText("  ...");
+            holder.reactionImage.setImageDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.ic_baseline_add_reaction_24));
         }
         if (position == selectedPosition) {
-            view.setBackground(selectedItemBackground);
-        } else {
-            view.setBackground(null);
+            holder.reactionImage.setBackground(selectedItemBackground);
+        } else if (position != getCount() - 1){
+            holder.reactionImage.setBackground(null);
         }
         if (onClickListener != null) {
             View finalView = view;
@@ -76,9 +76,9 @@ public class ReactionsAdapter extends ArrayAdapter<Reaction> {
     }
 
     public static class ViewHolder{
-        public TextView reactionTextView;
+        public ImageView reactionImage;
         public ViewHolder(View itemView) {
-            reactionTextView = itemView.findViewById(R.id.reaction_text_in_reaction_item);
+            reactionImage = itemView.findViewById(R.id.reaction_image_in_reaction_item);
         }
     }
 }

@@ -23,6 +23,10 @@
         <activity android:name=".Activities.MainActivity"
             android:exported="false">
         </activity>
+
+        <activity android:name=".Activities.MarkInfoActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>

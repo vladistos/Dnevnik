@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="top"
                 android:layout_marginHorizontal="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@id/subject_time_in_schedule_item"
@@ -38,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginVertical="10dp"
                 android:layout_marginEnd="15dp"
                 android:textSize="15sp"
                 android:textColor="#C6232323"/>
@@ -46,25 +47,23 @@
             <TextView
                 android:layout_below="@id/subject_name_in_schedule_item"
                 android:id="@+id/subject_text_in_schedule_item"
-                android:layout_toStartOf="@+id/marks_in_schedule_item"
                 android:layout_alignParentStart="true"
                 android:linksClickable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="10dp"/>
 
-            <TextView
-                android:id="@+id/marks_in_schedule_item"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:id="@+id/marks_in_schedule_item_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_centerVertical="true"
-                android:layout_below="@+id/subject_time_in_schedule_item"
-                android:layout_margin="10dp"/>
+                android:layout_below="@+id/subject_text_in_schedule_item"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginBottom="10dp"/>
 
         </RelativeLayout>
 

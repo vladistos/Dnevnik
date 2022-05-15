@@ -25,7 +25,7 @@ import ru.vladik.myapplication.DiaryAPI.Util.HttpUtil;
 public class DiaryBase {
     private final String token;
     private final String API_URL = "https://api.dnevnik.ru/v2/";
-    private final String API_V6_MOBILE_URL = "https://api.dnevnik.ru/mobile/v6.0/";
+    private final String API_V6_MOBILE_URL = "https://api.dnevnik.ru/mobile/v6/";
     private final String API_URL_NO_V = "https://dnevnik.ru/api/";
     private final String login, password;
     private final OkHttpClient client;

@@ -3,10 +3,14 @@ package ru.vladik.myapplication.Adapters;
 import static ru.vladik.myapplication.Utils.DateHelper.getDateFromString;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,14 +21,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Lesson;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.LessonWithMarks;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Mark;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Schedule;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.TimeTable;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Work;
+import ru.vladik.myapplication.Activities.MarkInfoActivity;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.FullMark;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.Lesson;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.LessonWithMarks;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.Mark;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.Schedule;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.TimeTable;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.Work;
 import ru.vladik.myapplication.Exceptions.CouldNotGetDateException;
 import ru.vladik.myapplication.R;
+import ru.vladik.myapplication.Utils.DrawableHelper;
 import ru.vladik.myapplication.Utils.StaticRecourses;
 
 public class ScheduleAdapter extends ArrayAdapter<LessonWithMarks> {
@@ -90,7 +97,7 @@ public class ScheduleAdapter extends ArrayAdapter<LessonWithMarks> {
         List<Mark> markList = getItem(position).getMarks();
         TextView lessonName = view.findViewById(R.id.subject_name_in_schedule_item);
         TextView lessonText= view.findViewById(R.id.subject_text_in_schedule_item);
-        TextView marksText = view.findViewById(R.id.marks_in_schedule_item);
+        LinearLayout marksTextLayout = view.findViewById(R.id.marks_in_schedule_item_layout);
         TextView lessonTime = view.findViewById(R.id.subject_time_in_schedule_item);
 
         //Preparing data for homework
@@ -99,13 +106,6 @@ public class ScheduleAdapter extends ArrayAdapter<LessonWithMarks> {
             if (work.getType().equals("Homework")) {
                 lessonTextString.append(work.getText()).append(" ");
             }
-        }
-
-        //Preparing data for marks
-        StringBuilder marksTextString = new StringBuilder();
-        for (Mark mark : markList) {
-            marksTextString.append(mark.getTextValue());
-            marksTextString.append(" ");
         }
 
         //Prepare and set data for time of lesson
@@ -124,11 +124,30 @@ public class ScheduleAdapter extends ArrayAdapter<LessonWithMarks> {
         }
 
         //Set data for marks
-        if (!marksTextString.toString().isEmpty()) {
-            marksText.setVisibility(View.VISIBLE);
-            marksText.setText(marksTextString.toString());
+        if (!markList.isEmpty()) {
+            marksTextLayout.setVisibility(View.VISIBLE);
+            marksTextLayout.removeAllViews();
+            for (Mark mark : markList) {
+                TextView markText = new TextView(getContext());
+                markText.setTextSize(20);
+                markText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                markText.setText(mark.getTextValue());
+                markText.setTextColor(DrawableHelper.getColorByMood(getContext(),
+                        mark.getMood(), Color.BLACK));
+                markText.setOnClickListener((textView) -> {
+                    Intent intent = new Intent(getContext(), MarkInfoActivity.class);
+                    intent.putExtra("a", new FullMark(
+                            mark,
+                            lesson,
+                            lesson.getSubject()
+                    ));
+                    getContext().startActivity(intent);
+                });
+                markText.setPadding(5, 5, 5, 5);
+                marksTextLayout.addView(markText);
+            }
         } else {
-            marksText.setVisibility(View.GONE);
+            marksTextLayout.setVisibility(View.GONE);
         }
 
         //Set data for homework

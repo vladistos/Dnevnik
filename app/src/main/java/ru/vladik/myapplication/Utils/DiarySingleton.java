@@ -1,5 +1,12 @@
 package ru.vladik.myapplication.Utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+
+import androidx.annotation.NonNull;
+
+import ru.vladik.myapplication.Activities.LoginActivity;
 import ru.vladik.myapplication.DiaryAPI.DiaryAPI;
 
 public class DiarySingleton {
@@ -11,9 +18,12 @@ public class DiarySingleton {
         this.diaryAPI = diaryAPI;
     }
 
-    public static DiarySingleton getInstance() {
+    public static DiarySingleton getInstance(@NonNull Context context) {
         if (singleton == null) {
-            throw new AssertionError("You have to call init first");
+            context.startActivity(new Intent(context, LoginActivity.class));
+            if (context instanceof Activity) {
+                ((Activity) context).finish();
+            }
         }
         return singleton;
     }

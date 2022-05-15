@@ -1,11 +1,10 @@
 package ru.vladik.myapplication.Adapters;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,25 +14,26 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.graphics.drawable.DrawableWrapper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import ru.vladik.myapplication.Dialogs.MarkInfoDialog;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.FullMark;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Mark;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Subject;
-import ru.vladik.myapplication.DiaryAPI.DataClasses.Mood;
+import ru.vladik.myapplication.Activities.MarkInfoActivity;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.Subject;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v2.Mood;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v6.Mark;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v6.MarkSubject;
+import ru.vladik.myapplication.DiaryAPI.DataClasses.v6.ShortMark;
 import ru.vladik.myapplication.R;
-import ru.vladik.myapplication.Utils.DrawableHelper;
 
 public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> {
 
     private final LayoutInflater mInflater;
-    private List<FullMark> markList;
+    private List<Mark> markList;
 
     @SuppressLint("NotifyDataSetChanged")
-    public void refreshList(List<FullMark> markList) {
+    public void refreshList(List<Mark> markList) {
         this.markList = markList;
         notifyDataSetChanged();
     }
@@ -58,27 +58,22 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Mark mark = markList.get(position).getMark();
-        Subject subject = markList.get(position).getSubject();
+        Mark mark = markList.get(position);
+        MarkSubject subject = mark.getSubject();
         holder.markSubject.setText(subject.getName());
-        holder.markText.setText(mark.getTextValue());
+        String markText = "";
+        if (mark.getMarks().size() == 2) {
+            markText = mark.getMarks().get(0).getValue() + "/" + mark.getMarks().get(1).getValue();
+        } else if (mark.getMarks().size() == 1){
+            markText = mark.getMarks().get(0).getValue();
+        }
+        holder.markText.setText(markText);
         RippleDrawable rippleDrawable = (RippleDrawable) AppCompatResources.getDrawable(context, R.drawable.selectable_rounded);
         if (rippleDrawable != null && rippleDrawable.getNumberOfLayers() == 0) {
-            switch (markList.get(position).getMark().getMood()) {
-                case "Good":
-                    rippleDrawable.addLayer(shapeGood);
-                    break;
-                case "Average":
-                    rippleDrawable.addLayer(shapeAverage);
-                    break;
-                case "Bad":
-                    rippleDrawable.addLayer(shapeBad);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + markList.get(position).getMark().getMood());
-            }
-        } else if (rippleDrawable != null) {
-            switch (markList.get(position).getMark().getMood()) {
+            rippleDrawable.addLayer(new ColorDrawable());
+        }
+        if (rippleDrawable != null) {
+            switch (mark.getMarks().get(0).getMood()) {
                 case Mood.GOOD:
                     rippleDrawable.setDrawable(0, shapeGood);
                     break;
@@ -88,14 +83,13 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
                 case Mood.BAD:
                     rippleDrawable.setDrawable(0, shapeBad);
                     break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + markList.get(position).getMark().getMood());
             }
         }
         holder.markLayout.setBackground(rippleDrawable);
         holder.mainLayout.setOnClickListener((view) ->{
-            Dialog dialog = new MarkInfoDialog(context, markList.get(position));
-            dialog.show();
+            Intent intent = new Intent(context, MarkInfoActivity.class);
+            intent.putExtra("a", mark);
+            context.startActivity(intent);
         });
     }
 

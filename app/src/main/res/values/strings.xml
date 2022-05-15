@@ -15,4 +15,16 @@
     <string name="recent_marks_on_main_text">Недавние оценки</string>
     <string name="news_on_main_text">Новости</string>
     <string name="work_info">Информация о работе</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mark_in_class">Оценка в классе</string>
+
+    <string name="not_set">Добавить реакцию</string>
+    <string name="like">Лайк</string>
+    <string name="angry">Злой</string>
+    <string name="heart">Нравится</string>
+    <string name="laughing">Хихихиха</string>
+    <string name="ok">Ок</string>
+    <string name="sad">Грустно</string>
+    <string name="surprised">Вау</string>
 </resources>

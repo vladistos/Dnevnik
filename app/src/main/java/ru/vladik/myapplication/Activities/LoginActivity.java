@@ -22,14 +22,18 @@ import ru.vladik.myapplication.Utils.AsyncUtil;
 import ru.vladik.myapplication.Utils.DiarySingleton;
 import ru.vladik.myapplication.Utils.SharedPreferencesManager;
 import ru.vladik.myapplication.Utils.StaticRecourses;
+import ru.vladik.myapplication.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
+
+    ActivityLoginBinding binding;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        FrameLayout loggedCaseFrame = findViewById(R.id.login_load_frame);
-        RelativeLayout notLoggedCaseRelativeLayout = findViewById(R.id.login_main_relative);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        FrameLayout loggedCaseFrame = binding.loginLoadFrame;
+        RelativeLayout notLoggedCaseRelativeLayout = binding.loginMainRelative;
         notLoggedCaseRelativeLayout.setVisibility(View.INVISIBLE);
         String[] loginInfo = SharedPreferencesManager.getAccountLoginInfo(this);
         if (loginInfo == null) {
@@ -64,10 +68,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setLogin() {
-        TextInputLayout passwordInputLayout = findViewById(R.id.password_text_input);
-        TextInputEditText loginView = findViewById(R.id.login_edit_text);
-        TextInputEditText passwordView = findViewById(R.id.password_edit_text);
-        MaterialButton loginButton = findViewById(R.id.login_button);
+        TextInputLayout passwordInputLayout = binding.passwordTextInput;
+        TextInputEditText loginView = binding.loginEditText;
+        TextInputEditText passwordView = binding.passwordEditText;
+        MaterialButton loginButton = binding.loginButton;
         loginButton.setOnClickListener(view -> AsyncUtil.startAsyncTask(() -> {
             try {
                 String login = loginView.getText() != null ?
@@ -77,6 +81,13 @@ public class LoginActivity extends AppCompatActivity {
                 if (!login.isEmpty() && !password.isEmpty()) {
                     DiaryAPI diaryAPI = new DiaryAPI(login, password);
                     DiarySingleton.init(diaryAPI);
+                    StaticRecourses.UserContext = diaryAPI.getContext();
+                    StaticRecourses.classmatePersonsList = diaryAPI.getGroupPersons(
+                            StaticRecourses.UserContext.getGroupIds().get(0)
+                    );
+                    StaticRecourses.timeTable = diaryAPI.getGroupTimeTable(
+                            StaticRecourses.UserContext.getGroupIds().get(0)
+                    );
                     SharedPreferencesManager.saveAccountLoginInfo(this, login, password);
                     Intent intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
