@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="ru.vladik.myapplication.Fragments.MainFragment"
+        android:name="ru.vladik.dnevnik.Fragments.MainFragment"
         android:label="fragment_blank"
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="ru.vladik.myapplication.Fragments.AcademyPerformanceFragment"
+        android:name="ru.vladik.dnevnik.Fragments.AcademyPerformanceFragment"
         android:label="fragment_diary"
         tools:layout="@layout/fragment_academy_performance" />
     <fragment
         android:id="@+id/scheduleFragment"
-        android:name="ru.vladik.myapplication.Fragments.ScheduleFragment"
+        android:name="ru.vladik.dnevnik.Fragments.ScheduleFragment"
         android:label="fragment_schedule"
         tools:layout="@layout/fragment_schedule" />
 </navigation>

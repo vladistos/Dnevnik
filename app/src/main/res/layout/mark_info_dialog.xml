@@ -71,11 +71,14 @@
 
                 </RelativeLayout>
 
-            <com.github.mikephil.charting.charts.HorizontalBarChart
+            <TextView
+                android:textAlignment="textEnd"
+                android:layout_margin="10dp"
+                android:text="@string/match_with_classmates"
                 android:layout_below="@id/mark_info_container"
-                android:id="@+id/mark_statistic_chart"
+                android:id="@+id/mark_statistic_redirect"
                 android:layout_width="match_parent"
-                android:layout_height="800dp"/>
+                android:layout_height="wrap_content"/>
 
         </RelativeLayout>
 

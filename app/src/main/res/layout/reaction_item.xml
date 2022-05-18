@@ -6,9 +6,8 @@
 
     <ImageView
         android:id="@+id/reaction_image_in_reaction_item"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="5dp"
-        android:lines="1"/>
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:padding="5dp" />
 
 </FrameLayout>

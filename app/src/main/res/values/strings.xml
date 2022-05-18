@@ -19,7 +19,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="mark_in_class">Оценка в классе</string>
 
-    <string name="not_set">Добавить реакцию</string>
+    <string name="not_set">Проголосовать</string>
     <string name="like">Лайк</string>
     <string name="angry">Злой</string>
     <string name="heart">Нравится</string>
@@ -27,4 +27,5 @@
     <string name="ok">Ок</string>
     <string name="sad">Грустно</string>
     <string name="surprised">Вау</string>
+    <string name="match_with_classmates">Сравнить с одноклассниками >></string>
 </resources>

@@ -34,6 +34,7 @@
     </FrameLayout>
 
     <ListView
+        android:overScrollMode="never"
         android:layout_below="@id/arrows_on_schedule_layout"
         android:id="@+id/schedule_list_view"
         android:layout_width="wrap_content"
